@@ -416,12 +416,9 @@ vip_plot_CLE
 vip_plot <- cowplot::plot_grid(vip_plot_NE, vip_plot_CLE, ncol = 2)
 cowplot::save_plot("vip_plot.pdf", vip_plot)
 
-
-
 # Prediction --------------------------------------------------------------
 
-
-## predictions with standard decision tree
+## Predictions with standard decision tree
 mod_NE_standard <- rpart(play_type ~ ydstogo + down + score_differential + shotgun + qtr, 
                          data = filter(data_train, posteam == "NE"), 
                          method = "class", control = list(minbucket = 100, cp = 0.001))
@@ -440,9 +437,9 @@ predictions_CLE_standard <- predict(mod_CLE_standard, newdata = filter(data_test
 predictions_SEA_standard <- predict(mod_SEA_standard, newdata = filter(data_test, posteam == "SEA"), type = "class")
 predictions_HOU_standard <- predict(mod_HOU_standard, newdata = filter(data_test, posteam == "HOU"), type = "class")
 
-## predictions with MS-DT
+## Predictions with MS-DT
 
-# create list with data frames for each new time series
+# Create list with data frames for each new time series
 data_test_NE <- filter(data_test, posteam == "NE") %>% split(f = .[["game_id"]])
 data_test_SEA <- filter(data_test, posteam == "SEA") %>% split(f = .[["game_id"]])
 data_test_CLE <- filter(data_test, posteam == "CLE") %>% split(f = .[["game_id"]])
@@ -603,9 +600,7 @@ data_test_HOU_df <- bind_rows(data_test_HOU)
 mean(data_test_HOU_df$pred_MSDT != data_test_HOU_df$play_type)
 mean(predictions_HOU_standard != data_test_HOU_df$play_type)
 
-
-# Predictions of the first match ------------------------------------------
-
+## Predictions of the first match ------------------------------------------
 mod_NE_standard <- rpart(play_type ~ ydstogo + down + score_differential + shotgun + qtr, 
                          data = filter(data_train, posteam == "NE"), 
                          method = "class", control = list(minbucket = 100, cp = 0.001))
@@ -619,15 +614,10 @@ data_test_CLE <- filter(data_test, posteam == "CLE", game_id == 2018090901)
 predictions_NE_standard <- predict(mod_NE_standard, newdata = data_test_NE, type = "class")
 predictions_CLE_standard <- predict(mod_CLE_standard, newdata = data_test_CLE, type = "class")
 
-
-
-
 mean(data_test_NE$play_type != predictions_NE_standard)
 mean(data_test_CLE$play_type != predictions_CLE_standard)
 
-
-## predictions with MS-DT for NE
-
+## Predictions with MS-DT for NE
 cur_match <- data_test_NE
 all_preds <- rep(NA, nrow(cur_match))
 # t = 1
@@ -645,12 +635,9 @@ for(t in 2:nrow(cur_match)){
 }
 data_test_NE$pred_MSDT <- all_preds
 
-
 mean(data_test_NE$play_type != data_test_NE$pred_MSDT)
 
-
-## predictions with MS-DT for CLE
-
+## Predictions with MS-DT for CLE
 cur_match <- data_test_CLE
 all_preds <- rep(NA, nrow(cur_match))
 # t = 1
@@ -668,6 +655,4 @@ for(t in 2:nrow(cur_match)){
 }
 data_test_CLE$pred_MSDT <- all_preds
 
-
 mean(data_test_CLE$play_type != data_test_CLE$pred_MSDT)
-
